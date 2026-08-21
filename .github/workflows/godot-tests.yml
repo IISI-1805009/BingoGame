@@ -1,0 +1,26 @@
+name: Godot core tests
+
+on:
+  push:
+    paths:
+      - "project.godot"
+      - "game_core/**"
+      - "tests/**"
+      - "data/**"
+      - ".github/workflows/godot-tests.yml"
+  pull_request:
+    paths:
+      - "project.godot"
+      - "game_core/**"
+      - "tests/**"
+      - "data/**"
+      - ".github/workflows/godot-tests.yml"
+
+jobs:
+  core:
+    runs-on: ubuntu-latest
+    container: barichello/godot-ci:4.3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run deterministic core smoke tests
+        run: godot --headless --path . --script res://tests/core_smoke.gd

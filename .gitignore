@@ -1,0 +1,19 @@
+# Godot editor/import cache
+.godot/
+*.import
+*.gdc
+*.remap
+
+# Local platform exports and generated Android project
+build/
+android/
+*.pck
+*.apk
+*.aab
+*.ipa
+*.xcarchive/
+*.xcframework/
+
+# Local/editor files
+.DS_Store
+*.tmp

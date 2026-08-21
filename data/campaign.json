@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 2,
+  "chapters": [
+    {
+      "chapter": 1,
+      "title": "毒霧初征",
+      "stageRange": [1, 5],
+      "stageNames": ["毒霧初陣", "瘴氣小徑", "沉泥伏擊", "沼澤深處", "沼澤守門戰"],
+      "mapId": "毒霧沼澤",
+      "aiCastleLevels": [1, 1, 1, 2, 2],
+      "starTargetsByStage": [[8, 12], [8, 12], [8, 12], [8, 12], [8, 12]],
+      "aiDifficulty": "easy",
+      "classes": ["劍士", "弓手", "武士", "建築工"],
+      "rarityWeights": {"灰": 70, "綠": 25, "藍": 5, "紅": 0, "金": 0},
+      "meritReward": 30
+    },
+    {
+      "chapter": 2,
+      "title": "冰原試煉",
+      "stageRange": [6, 10],
+      "stageNames": ["霜痕前哨", "凍土行軍", "冰晶隘口", "暴雪防線", "雪原試煉"],
+      "mapId": "極地雪原",
+      "aiCastleLevels": [3, 3, 4, 4, 5],
+      "starTargetsByStage": [[8, 9], [8, 11], [9, 11], [9, 11], [10, 13]],
+      "aiDifficulty": "normal",
+      "classes": ["劍士", "弓手", "武士", "戰士", "建築工"],
+      "rarityWeights": {"灰": 50, "綠": 30, "藍": 15, "紅": 5, "金": 0},
+      "meritReward": 60
+    },
+    {
+      "chapter": 3,
+      "title": "疾風戰線",
+      "stageRange": [11, 15],
+      "stageNames": ["風起平原", "逆風追擊", "長弓高地", "旋風迴廊", "蒼穹決鬥"],
+      "mapId": "疾風平原",
+      "aiCastleLevels": [6, 6, 7, 7, 8],
+      "starTargetsByStage": [[10, 13], [11, 13], [12, 14], [11, 14], [13, 16]],
+      "aiDifficulty": "normal",
+      "classes": ["劍士", "弓手", "武士", "騎士", "建築工"],
+      "rarityWeights": {"灰": 30, "綠": 30, "藍": 25, "紅": 12, "金": 3},
+      "meritReward": 90
+    },
+    {
+      "chapter": 4,
+      "title": "熔岩攻防",
+      "stageRange": [16, 20],
+      "stageNames": ["赤熱邊境", "熔流岔路", "火山突圍", "灼岩堡壘", "熔核決戰"],
+      "mapId": "熔岩地帶",
+      "aiCastleLevels": [9, 9, 10, 10, 11],
+      "starTargetsByStage": [[13, 15], [14, 17], [14, 18], [14, 18], [16, 19]],
+      "aiDifficulty": "normal",
+      "classes": ["劍士", "武士", "戰士", "忍者", "建築工"],
+      "rarityWeights": {"灰": 15, "綠": 25, "藍": 30, "紅": 22, "金": 8},
+      "meritReward": 120
+    },
+    {
+      "chapter": 5,
+      "title": "震裂終局",
+      "stageRange": [21, 25],
+      "stageNames": ["裂地警報", "崩岩通道", "斷層交鋒", "荒地圍城", "震裂決戰"],
+      "mapId": "震裂荒地",
+      "aiCastleLevels": [12, 13, 13, 14, 15],
+      "starTargetsByStage": [[19, 24], [20, 25], [18, 26], [21, 25], [21, 31]],
+      "aiDifficulty": "normal",
+      "classes": ["弓手", "戰士", "騎士", "法師", "建築工"],
+      "rarityWeights": {"灰": 5, "綠": 15, "藍": 25, "紅": 35, "金": 20},
+      "meritReward": 150
+    },
+    {
+      "chapter": 6,
+      "title": "浮島奇襲",
+      "stageRange": [26, 30],
+      "stageNames": ["雲端踏板", "浮岩哨站", "斷橋空戰", "天穹要塞", "浮島主城"],
+      "mapId": "高空浮島",
+      "aiCastleLevels": [16, 17, 18, 19, 20],
+      "starTargetsByStage": [[20, 27], [23, 27], [26, 33], [29, 35], [27, 36]],
+      "aiDifficulty": "hard",
+      "classes": ["劍士", "弓手", "騎士", "法師", "建築工"],
+      "rarityWeights": {"灰": 0, "綠": 10, "藍": 25, "紅": 40, "金": 25},
+      "aiItemsByStage": [["防風結界"], ["疾風召喚符"], ["瘟疫LV1"], ["兵符LV1"], ["地雷"]],
+      "meritReward": 180
+    },
+    {
+      "chapter": 7,
+      "title": "沙海遠征",
+      "stageRange": [31, 35],
+      "stageNames": ["黃沙邊哨", "流沙迷途", "風蝕古道", "沙暴包圍", "荒漠王庭"],
+      "mapId": "沙丘荒漠",
+      "aiCastleLevels": [21, 22, 23, 24, 25],
+      "starTargetsByStage": [[24, 32], [24, 33], [28, 35], [28, 34], [25, 37]],
+      "aiDifficulty": "hard",
+      "classes": ["弓手", "武士", "戰士", "騎士", "建築工"],
+      "rarityWeights": {"灰": 0, "綠": 5, "藍": 20, "紅": 40, "金": 35},
+      "aiItemsByStage": [["沙暴召喚符"], ["緊急維修"], ["職業封印"], ["兵符LV2"], ["瘟疫LV2"]],
+      "meritReward": 210
+    },
+    {
+      "chapter": 8,
+      "title": "雨林洪峰",
+      "stageRange": [36, 40],
+      "stageNames": ["湖畔斥候", "驟雨密林", "洪流渡口", "雨幕圍攻", "翠湖決戰"],
+      "mapId": "湖畔雨林",
+      "aiCastleLevels": [26, 27, 28, 29, 30],
+      "starTargetsByStage": [[27, 33], [28, 38], [29, 37], [29, 36], [30, 39]],
+      "aiDifficulty": "hard",
+      "classes": ["劍士", "弓手", "戰士", "忍者", "建築工"],
+      "rarityWeights": {"灰": 0, "綠": 0, "藍": 15, "紅": 40, "金": 45},
+      "aiItemsByStage": [["洪流沖刷符", "兵符LV1"], ["瘟疫LV1", "緊急維修"], ["職業封印", "地雷"], ["晴天結界", "兵符LV2"], ["洪流沖刷符", "瘟疫LV2"]],
+      "meritReward": 240
+    },
+    {
+      "chapter": 9,
+      "title": "迷霧菁英戰",
+      "stageRange": [41, 45],
+      "stageNames": ["霧林入口", "無聲追獵", "幻影岔路", "迷霧城牆", "迷霧菁英戰"],
+      "mapId": "迷霧森林",
+      "aiCastleLevels": [31, 32, 33, 34, 35],
+      "starTargetsByStage": [[47, 65], [54, 67], [50, 68], [58, 75], [57, 73]],
+      "aiDifficulty": "hard",
+      "classes": ["劍士", "武士", "騎士", "忍者", "建築工"],
+      "rarityWeights": {"灰": 0, "綠": 0, "藍": 10, "紅": 35, "金": 55},
+      "aiItemsByStage": [["迷霧潛行符", "地雷", "兵符LV1"], ["瘟疫LV2", "職業封印", "緊急維修"], ["迷霧潛行符", "晴天結界", "兵符LV2"], ["職業封印", "地雷", "換防令"], ["瘟疫LV2", "職業封印", "迷霧潛行符"]],
+      "meritReward": 270
+    },
+    {
+      "chapter": 10,
+      "title": "末日終章",
+      "stageRange": [46, 46],
+      "stageNames": ["終焉領主"],
+      "mapId": "末日",
+      "aiCastleLevels": [40],
+      "starTargetsByStage": [[70, 95]],
+      "aiDifficulty": "hard",
+      "classes": ["劍士", "戰士", "忍者", "法師", "建築工"],
+      "rarityWeights": {"灰": 0, "綠": 0, "藍": 5, "紅": 30, "金": 65},
+      "aiItemsByStage": [["瘟疫LV2", "晴天結界", "熔岩噴發符"]],
+      "meritReward": 300
+    }
+  ],
+  "stageOverrides": {
+    "1": {
+      "tutorial": true,
+      "rarityWeights": {"灰": 100, "綠": 0, "藍": 0, "紅": 0, "金": 0}
+    },
+    "5": {"unlocksClass": "戰士"},
+    "10": {"unlocksClass": "騎士"},
+    "15": {"unlocksClass": "忍者"},
+    "20": {"unlocksClass": "法師"},
+    "46": {"boss": true}
+  }
+}

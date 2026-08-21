@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "maps": [
+    {"id": "毒霧沼澤", "mainWeather": "poison", "bonuses": {"忍者": 0.15}, "penalties": {"騎士": -0.15, "武士": -0.15}},
+    {"id": "極地雪原", "mainWeather": "ice", "bonuses": {"建築工": 0.15}, "penalties": {"弓手": -0.15, "劍士": -0.15}},
+    {"id": "疾風平原", "mainWeather": "wind", "bonuses": {"弓手": 0.15, "武士": 0.15}, "penalties": {"法師": -0.15}},
+    {"id": "熔岩地帶", "mainWeather": "volcano", "bonuses": {"戰士": 0.15}, "penalties": {"法師": -0.15}},
+    {"id": "震裂荒地", "mainWeather": "quake", "bonuses": {"建築工": 0.15, "戰士": 0.15}, "penalties": {"忍者": -0.15}},
+    {"id": "高空浮島", "mainWeather": "wind", "bonuses": {"劍士": 0.15}, "penalties": {"建築工": -0.15}},
+    {"id": "沙丘荒漠", "mainWeather": "sandstorm", "bonuses": {"建築工": 0.15}, "penalties": {"法師": -0.15, "劍士": -0.15}},
+    {"id": "湖畔雨林", "mainWeather": "flood", "bonuses": {"弓手": 0.15}, "penalties": {"騎士": -0.15, "武士": -0.15}},
+    {"id": "迷霧森林", "mainWeather": "fog", "bonuses": {"忍者": 0.15}, "penalties": {"弓手": -0.15, "戰士": -0.15}},
+    {"id": "末日", "mainWeather": "apocalypse", "bonuses": {}, "penalties": {}},
+    {"id": "平靜草原", "mainWeather": null, "bonuses": {}, "penalties": {}}
+  ]
+}

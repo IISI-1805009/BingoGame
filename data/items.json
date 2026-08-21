@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "items": [
+    {"id": "驅寒毛毯", "category": "weather_counter", "effect": "unfreeze_all"},
+    {"id": "防風結界", "category": "weather_counter", "effect": "protect_wind"},
+    {"id": "滅火壺", "category": "weather_counter", "effect": "protect_volcano"},
+    {"id": "瘟疫瘴氣符", "category": "weather_summon", "effect": "summon", "weather": "poison"},
+    {"id": "極寒霜訣符", "category": "weather_summon", "effect": "summon", "weather": "ice"},
+    {"id": "疾風召喚符", "category": "weather_summon", "effect": "summon", "weather": "wind"},
+    {"id": "熔岩噴發符", "category": "weather_summon", "effect": "summon", "weather": "volcano"},
+    {"id": "大地震顫符", "category": "weather_summon", "effect": "summon", "weather": "quake"},
+    {"id": "沙暴召喚符", "category": "weather_summon", "effect": "summon", "weather": "sandstorm"},
+    {"id": "洪流沖刷符", "category": "weather_summon", "effect": "summon", "weather": "flood"},
+    {"id": "迷霧潛行符", "category": "weather_summon", "effect": "summon", "weather": "fog"},
+    {"id": "晴天結界", "category": "weather_summon", "effect": "sunny", "duration": 2},
+    {"id": "瘟疫LV1", "category": "disruption", "effect": "plague", "count": 5},
+    {"id": "瘟疫LV2", "category": "disruption", "effect": "plague", "count": 7},
+    {"id": "職業封印", "category": "disruption", "effect": "class_seal", "duration": 2, "target": "class"},
+    {"id": "地雷", "category": "disruption", "effect": "mine"},
+    {"id": "兵符LV1", "category": "recovery", "effect": "reroll_unclaimed", "count": 10},
+    {"id": "兵符LV2", "category": "recovery", "effect": "reset_board"},
+    {"id": "緊急維修", "category": "recovery", "effect": "repair_statuses"},
+    {"id": "換防令", "category": "recovery", "effect": "reroll_claimed", "target": "own_claimed_cell"}
+  ]
+}
