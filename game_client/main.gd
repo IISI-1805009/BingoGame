@@ -42,9 +42,18 @@ var current_stage: Dictionary = {}
 var result_awarded := false
 var hub_overlay: Control
 var hub_profile_label: Label
+var hub_resource_label: Label
 var hub_training_selector: OptionButton
+var hub_training_status_label: Label
 var campaign_overlay: Control
 var campaign_list: VBoxContainer
+var stage_detail_overlay: Control
+var stage_detail: Dictionary = {}
+var stage_detail_content: VBoxContainer
+var stage_detail_start_button: Button
+var battle_prep_overlay: Control
+var battle_prep_content: VBoxContainer
+var battle_prep_start_button: Button
 var result_campaign_button: Button
 var result_next_button: Button
 
@@ -55,6 +64,8 @@ func _ready() -> void:
     _build_shell()
     _build_hub_overlay()
     _build_campaign_overlay()
+    _build_stage_detail_overlay()
+    _build_battle_prep_overlay()
     _new_preview_match()
     _show_hub()
 
@@ -328,60 +339,218 @@ func _build_hub_overlay() -> void:
     hub_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
     hub_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
     add_child(hub_overlay)
-    var shade := ColorRect.new()
-    shade.color = Color("101827")
-    shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-    hub_overlay.add_child(shade)
+
+    var sky := ColorRect.new()
+    sky.color = Color("2a9ee8")
+    sky.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    hub_overlay.add_child(sky)
+    var horizon := ColorRect.new()
+    horizon.color = Color(0.42, 0.82, 0.96, 0.18)
+    horizon.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    horizon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    hub_overlay.add_child(horizon)
+    var cloud_left := Label.new()
+    cloud_left.text = "☁"
+    cloud_left.position = Vector2(18, 160)
+    cloud_left.add_theme_font_size_override("font_size", 120)
+    cloud_left.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 0.32))
+    cloud_left.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    hub_overlay.add_child(cloud_left)
+    var cloud_right := Label.new()
+    cloud_right.text = "☁"
+    cloud_right.position = Vector2(545, 270)
+    cloud_right.add_theme_font_size_override("font_size", 150)
+    cloud_right.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 0.24))
+    cloud_right.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    hub_overlay.add_child(cloud_right)
+
     var center := CenterContainer.new()
     center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
     hub_overlay.add_child(center)
     var panel := PanelContainer.new()
-    panel.custom_minimum_size = Vector2(360, 560)
+    panel.custom_minimum_size = Vector2(600, 1070)
+    panel.add_theme_stylebox_override("panel", _panel_style(Color("173d7d"), Color("f5d274"), 28, 3))
     center.add_child(panel)
+
+    var margin := MarginContainer.new()
+    margin.add_theme_constant_override("margin_left", 24)
+    margin.add_theme_constant_override("margin_top", 22)
+    margin.add_theme_constant_override("margin_right", 24)
+    margin.add_theme_constant_override("margin_bottom", 22)
+    panel.add_child(margin)
     var box := VBoxContainer.new()
-    box.add_theme_constant_override("separation", 12)
-    panel.add_child(box)
+    box.add_theme_constant_override("separation", 14)
+    margin.add_child(box)
+
+    var top_row := HBoxContainer.new()
+    top_row.add_theme_constant_override("separation", 12)
+    box.add_child(top_row)
+    var crest_panel := PanelContainer.new()
+    crest_panel.custom_minimum_size = Vector2(86, 76)
+    crest_panel.add_theme_stylebox_override("panel", _panel_style(Color("1d6bce"), Color("ffd764"), 22, 3))
+    top_row.add_child(crest_panel)
+    var crest := Label.new()
+    crest.text = "♜"
+    crest.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    crest.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+    crest.add_theme_font_size_override("font_size", 46)
+    crest.add_theme_color_override("font_color", Color("fff4bc"))
+    crest_panel.add_child(crest)
+    hub_resource_label = Label.new()
+    hub_resource_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    hub_resource_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+    hub_resource_label.add_theme_font_size_override("font_size", 17)
+    hub_resource_label.add_theme_color_override("font_color", Color("fff8d8"))
+    top_row.add_child(hub_resource_label)
+    var settings_badge := Label.new()
+    settings_badge.text = "⚙"
+    settings_badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    settings_badge.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+    settings_badge.custom_minimum_size = Vector2(62, 62)
+    settings_badge.add_theme_font_size_override("font_size", 34)
+    settings_badge.add_theme_color_override("font_color", Color("fff0ac"))
+    top_row.add_child(settings_badge)
+
     var title := Label.new()
-    title.text = "織城戰線｜主城"
+    title.text = "織城戰線"
     title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-    title.add_theme_font_size_override("font_size", 28)
+    title.add_theme_font_size_override("font_size", 48)
+    title.add_theme_color_override("font_color", Color("fff0ac"))
+    title.add_theme_color_override("font_shadow_color", Color("16325e"))
+    title.add_theme_constant_override("shadow_offset_x", 3)
+    title.add_theme_constant_override("shadow_offset_y", 4)
     box.add_child(title)
+
+    var subtitle := Label.new()
+    subtitle.text = "WOVEN RAMPART  ·  王國主城"
+    subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    subtitle.add_theme_font_size_override("font_size", 15)
+    subtitle.add_theme_color_override("font_color", Color("c4ebff"))
+    box.add_child(subtitle)
+
+    var castle_card := PanelContainer.new()
+    castle_card.custom_minimum_size = Vector2(0, 232)
+    castle_card.add_theme_stylebox_override("panel", _panel_style(Color("3a92df"), Color("ffe08b"), 26, 4))
+    box.add_child(castle_card)
+    var castle_box := VBoxContainer.new()
+    castle_box.alignment = BoxContainer.ALIGNMENT_CENTER
+    castle_box.add_theme_constant_override("separation", 4)
+    castle_card.add_child(castle_box)
+    var castle_icon := Label.new()
+    castle_icon.text = "♜"
+    castle_icon.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    castle_icon.add_theme_font_size_override("font_size", 92)
+    castle_icon.add_theme_color_override("font_color", Color("fff1b0"))
+    castle_box.add_child(castle_icon)
+    var castle_title := Label.new()
+    castle_title.text = "晨曦城堡"
+    castle_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    castle_title.add_theme_font_size_override("font_size", 24)
+    castle_title.add_theme_color_override("font_color", Color.WHITE)
+    castle_box.add_child(castle_title)
     hub_profile_label = Label.new()
     hub_profile_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     hub_profile_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-    box.add_child(hub_profile_label)
+    hub_profile_label.add_theme_font_size_override("font_size", 16)
+    hub_profile_label.add_theme_color_override("font_color", Color("e3f5ff"))
+    castle_box.add_child(hub_profile_label)
+
     var campaign_button := Button.new()
-    campaign_button.text = "進入戰役"
+    campaign_button.text = "⚔  戰役遠征\n挑戰 46 關王國戰線"
+    campaign_button.custom_minimum_size = Vector2(0, 98)
+    campaign_button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+    campaign_button.add_theme_font_size_override("font_size", 22)
+    _style_primary_button(campaign_button, Color("319c57"), Color("52bd73"), Color("fff0a7"))
     campaign_button.pressed.connect(_show_campaign)
     box.add_child(campaign_button)
+
     var castle_button := Button.new()
-    castle_button.text = "升級城堡"
+    castle_button.text = "♜  城堡養成\n提升戰力值與防禦"
+    castle_button.custom_minimum_size = Vector2(0, 82)
+    castle_button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+    castle_button.add_theme_font_size_override("font_size", 19)
+    _style_primary_button(castle_button, Color("277bc9"), Color("469ce4"), Color("d9f3ff"))
     castle_button.pressed.connect(_upgrade_castle)
     box.add_child(castle_button)
-    var training_label := Label.new()
-    training_label.text = "職業訓練所"
-    training_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-    box.add_child(training_label)
+
+    var training_card := PanelContainer.new()
+    training_card.add_theme_stylebox_override("panel", _panel_style(Color("6449a6"), Color("dcb6ff"), 20, 3))
+    box.add_child(training_card)
+    var training_box := VBoxContainer.new()
+    training_box.add_theme_constant_override("separation", 7)
+    training_card.add_child(training_box)
+    hub_training_status_label = Label.new()
+    hub_training_status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    hub_training_status_label.add_theme_font_size_override("font_size", 18)
+    hub_training_status_label.add_theme_color_override("font_color", Color("fbecff"))
+    training_box.add_child(hub_training_status_label)
     hub_training_selector = OptionButton.new()
     for index in range(Rules.ALL_CLASSES.size()):
         hub_training_selector.add_item(str(Rules.ALL_CLASSES[index]), index)
         hub_training_selector.set_item_metadata(index, str(Rules.ALL_CLASSES[index]))
     hub_training_selector.item_selected.connect(_on_hub_training_selected)
-    box.add_child(hub_training_selector)
+    hub_training_selector.add_theme_font_size_override("font_size", 18)
+    hub_training_selector.add_theme_stylebox_override("normal", _panel_style(Color("443274"), Color("e0c2ff"), 14, 2))
+    training_box.add_child(hub_training_selector)
     var training_button := Button.new()
-    training_button.text = "升級選定職業"
+    training_button.text = "✦  升級選定職業"
+    training_button.custom_minimum_size = Vector2(0, 54)
+    training_button.add_theme_font_size_override("font_size", 18)
+    _style_primary_button(training_button, Color("7a57bb"), Color("9473d4"), Color("fff1ff"))
     training_button.pressed.connect(_upgrade_training)
-    box.add_child(training_button)
+    training_box.add_child(training_button)
+
     var quick_button := Button.new()
-    quick_button.text = "自由測試戰鬥"
+    quick_button.text = "自由演練"
+    quick_button.custom_minimum_size = Vector2(0, 50)
+    quick_button.add_theme_font_size_override("font_size", 17)
+    _style_primary_button(quick_button, Color("cf7948"), Color("e99661"), Color("fff0cf"))
     quick_button.pressed.connect(_start_free_battle)
     box.add_child(quick_button)
+
     var note := Label.new()
-    note.text = "星級以完成輪數評定；各關的二、三星目標可在戰役地圖查看。"
+    note.text = "★ 以完成輪數評定星級，二／三星目標顯示於戰役地圖。"
     note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
     note.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-    note.add_theme_color_override("font_color", Color("9fb7d4"))
+    note.add_theme_color_override("font_color", Color("c8eaff"))
     box.add_child(note)
+
+    var navigation := HBoxContainer.new()
+    navigation.add_theme_constant_override("separation", 8)
+    box.add_child(navigation)
+    for entry in [["⌂\n主城", Color("2d88d5")], ["▤\n收藏", Color("8a6b50")], ["⚙\n設定", Color("8a6b50")]]:
+        var nav_button := Button.new()
+        nav_button.text = str(entry[0])
+        nav_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+        nav_button.custom_minimum_size = Vector2(0, 64)
+        nav_button.add_theme_font_size_override("font_size", 17)
+        _style_primary_button(nav_button, entry[1], Color("4b9fe0"), Color("fff0ac"))
+        nav_button.disabled = entry[0] != "⌂\n主城"
+        navigation.add_child(nav_button)
+
+
+func _panel_style(fill: Color, border: Color, radius: int = 16, border_width: int = 2) -> StyleBoxFlat:
+    var style := StyleBoxFlat.new()
+    style.bg_color = fill
+    style.border_color = border
+    style.set_border_width_all(border_width)
+    style.set_corner_radius_all(radius)
+    style.set_content_margin_all(14)
+    style.shadow_color = Color(0.04, 0.12, 0.25, 0.42)
+    style.shadow_size = 6
+    style.shadow_offset = Vector2(0, 4)
+    return style
+
+
+func _style_primary_button(button: Button, fill: Color, hover: Color, text_color: Color) -> void:
+    button.add_theme_stylebox_override("normal", _panel_style(fill, Color("ffe18a"), 18, 3))
+    button.add_theme_stylebox_override("hover", _panel_style(hover, Color("fff5bc"), 18, 3))
+    button.add_theme_stylebox_override("pressed", _panel_style(fill.darkened(0.16), Color("ffe18a"), 18, 3))
+    button.add_theme_stylebox_override("disabled", _panel_style(fill.darkened(0.38), Color("8090a7"), 18, 2))
+    button.add_theme_color_override("font_color", text_color)
+    button.add_theme_color_override("font_hover_color", Color.WHITE)
+    button.add_theme_color_override("font_pressed_color", text_color)
+    button.add_theme_color_override("font_disabled_color", Color("bec8d5"))
 
 
 func _build_campaign_overlay() -> void:
@@ -390,15 +559,23 @@ func _build_campaign_overlay() -> void:
     campaign_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
     campaign_overlay.visible = false
     add_child(campaign_overlay)
-    var shade := ColorRect.new()
-    shade.color = Color("101827")
-    shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-    campaign_overlay.add_child(shade)
+    var sky := ColorRect.new()
+    sky.color = Color("347fbd")
+    sky.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    campaign_overlay.add_child(sky)
+    var mist := Label.new()
+    mist.text = "✦    ☁       ✦    ☁"
+    mist.position = Vector2(34, 120)
+    mist.add_theme_font_size_override("font_size", 46)
+    mist.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 0.32))
+    mist.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    campaign_overlay.add_child(mist)
     var center := CenterContainer.new()
     center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
     campaign_overlay.add_child(center)
     var panel := PanelContainer.new()
-    panel.custom_minimum_size = Vector2(440, 680)
+    panel.custom_minimum_size = Vector2(610, 1080)
+    panel.add_theme_stylebox_override("panel", _panel_style(Color("173d7d"), Color("f7d979"), 28, 3))
     center.add_child(panel)
     var margin := MarginContainer.new()
     margin.add_theme_constant_override("margin_left", 14)
@@ -407,25 +584,353 @@ func _build_campaign_overlay() -> void:
     margin.add_theme_constant_override("margin_bottom", 14)
     panel.add_child(margin)
     var layout := VBoxContainer.new()
-    layout.add_theme_constant_override("separation", 10)
+    layout.add_theme_constant_override("separation", 12)
     margin.add_child(layout)
     var title := Label.new()
-    title.text = "戰役地圖｜全 46 關"
+    title.text = "王國戰役地圖"
     title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-    title.add_theme_font_size_override("font_size", 26)
+    title.add_theme_font_size_override("font_size", 34)
+    title.add_theme_color_override("font_color", Color("fff0ac"))
     layout.add_child(title)
+    var subtitle := Label.new()
+    subtitle.text = "穿越十章領地，奪回織城戰線"
+    subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    subtitle.add_theme_font_size_override("font_size", 16)
+    subtitle.add_theme_color_override("font_color", Color("cceeff"))
+    layout.add_child(subtitle)
     var scroll := ScrollContainer.new()
     scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
     scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
     layout.add_child(scroll)
     campaign_list = VBoxContainer.new()
     campaign_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-    campaign_list.add_theme_constant_override("separation", 10)
+    campaign_list.add_theme_constant_override("separation", 12)
     scroll.add_child(campaign_list)
     var back := Button.new()
-    back.text = "返回主城"
+    back.text = "← 返回主城"
+    back.custom_minimum_size = Vector2(0, 54)
+    back.add_theme_font_size_override("font_size", 18)
+    _style_primary_button(back, Color("356da8"), Color("4d91ca"), Color("ebf7ff"))
     back.pressed.connect(_show_hub)
     layout.add_child(back)
+
+
+func _build_stage_detail_overlay() -> void:
+    stage_detail_overlay = Control.new()
+    stage_detail_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    stage_detail_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+    stage_detail_overlay.visible = false
+    add_child(stage_detail_overlay)
+    var backdrop := ColorRect.new()
+    backdrop.color = Color("215a92")
+    backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    stage_detail_overlay.add_child(backdrop)
+    var center := CenterContainer.new()
+    center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    stage_detail_overlay.add_child(center)
+    var panel := PanelContainer.new()
+    panel.custom_minimum_size = Vector2(610, 1080)
+    panel.add_theme_stylebox_override("panel", _panel_style(Color("193d78"), Color("ffe08a"), 28, 3))
+    center.add_child(panel)
+    var margin := MarginContainer.new()
+    margin.add_theme_constant_override("margin_left", 24)
+    margin.add_theme_constant_override("margin_top", 22)
+    margin.add_theme_constant_override("margin_right", 24)
+    margin.add_theme_constant_override("margin_bottom", 22)
+    panel.add_child(margin)
+    var layout := VBoxContainer.new()
+    layout.add_theme_constant_override("separation", 12)
+    margin.add_child(layout)
+    var heading := Label.new()
+    heading.text = "關卡詳情"
+    heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    heading.add_theme_font_size_override("font_size", 32)
+    heading.add_theme_color_override("font_color", Color("fff0ac"))
+    layout.add_child(heading)
+    var scroll := ScrollContainer.new()
+    scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+    scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+    layout.add_child(scroll)
+    stage_detail_content = VBoxContainer.new()
+    stage_detail_content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    stage_detail_content.add_theme_constant_override("separation", 12)
+    scroll.add_child(stage_detail_content)
+    stage_detail_start_button = Button.new()
+    stage_detail_start_button.text = "⚔  前往備戰"
+    stage_detail_start_button.custom_minimum_size = Vector2(0, 68)
+    stage_detail_start_button.add_theme_font_size_override("font_size", 23)
+    _style_primary_button(stage_detail_start_button, Color("319c57"), Color("52bd73"), Color("fff5bc"))
+    stage_detail_start_button.pressed.connect(_start_stage_from_detail)
+    layout.add_child(stage_detail_start_button)
+    var back := Button.new()
+    back.text = "← 返回戰役地圖"
+    back.custom_minimum_size = Vector2(0, 48)
+    back.add_theme_font_size_override("font_size", 17)
+    _style_primary_button(back, Color("356da8"), Color("4d91ca"), Color("ebf7ff"))
+    back.pressed.connect(_show_campaign)
+    layout.add_child(back)
+
+
+func _show_stage_detail(stage_id: int) -> void:
+    stage_detail = Campaign.get_stage(stage_id, campaign_stages)
+    if stage_detail.is_empty():
+        return
+    campaign_overlay.visible = false
+    hub_overlay.visible = false
+    stage_detail_overlay.visible = true
+    _refresh_stage_detail()
+
+
+func _refresh_stage_detail() -> void:
+    for child in stage_detail_content.get_children():
+        stage_detail_content.remove_child(child)
+        child.queue_free()
+    if stage_detail.is_empty():
+        return
+    var stage_id := int(stage_detail["id"])
+    var progress: Dictionary = profile.get("campaign_progress", {}).get(str(stage_id), {})
+    var unlocked: bool = stage_id in profile.get("unlocked_stages", [1])
+    var map_data := Maps.get_map(str(stage_detail["mapId"]))
+    var targets: Dictionary = stage_detail.get("starTargets", {})
+
+    var title_card := PanelContainer.new()
+    title_card.add_theme_stylebox_override("panel", _panel_style(_chapter_color(int(stage_detail["chapter"])), Color("fff0a0"), 24, 3))
+    stage_detail_content.add_child(title_card)
+    var title_box := VBoxContainer.new()
+    title_box.add_theme_constant_override("separation", 5)
+    title_card.add_child(title_box)
+    var stage_title := Label.new()
+    stage_title.text = "STAGE %02d  ·  %s" % [stage_id, str(stage_detail["name"])]
+    stage_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    stage_title.add_theme_font_size_override("font_size", 28)
+    stage_title.add_theme_color_override("font_color", Color.WHITE)
+    title_box.add_child(stage_title)
+    var chapter_title := Label.new()
+    chapter_title.text = "第 %d 章｜%s%s" % [int(stage_detail["chapter"]), str(stage_detail.get("chapterTitle", "")), "｜%s" % _star_text(int(progress.get("stars", 0))) if bool(progress.get("cleared", false)) else ""]
+    chapter_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    chapter_title.add_theme_font_size_override("font_size", 17)
+    chapter_title.add_theme_color_override("font_color", Color("e9f8ff"))
+    title_box.add_child(chapter_title)
+
+    _add_detail_card("☁  戰場地圖", "%s｜主天氣：%s" % [str(stage_detail["mapId"]), _map_weather_text(map_data)], Color("2d86bd"))
+    _add_detail_card("♜  敵方城堡", "AI 城堡 Lv.%d｜HP %.0f｜DEF %.0f｜%s AI" % [
+        int(stage_detail["aiCastleLevel"]), Progression.castle_hp(int(stage_detail["aiCastleLevel"])), Progression.castle_def(int(stage_detail["aiCastleLevel"])), _difficulty_text(str(stage_detail["aiDifficulty"])),
+    ], Color("4e69b7"))
+    _add_detail_card("✦  登場職業", "  ·  ".join(stage_detail.get("classes", [])), Color("7653a9"))
+    _add_detail_card("◆  稀有度分布", _rarity_text(stage_detail.get("rarityWeights", {})), Color("aa5f55"))
+    var item_ids: Array = stage_detail.get("aiItems", [])
+    _add_detail_card("▣  敵方道具", "無攜帶道具" if item_ids.is_empty() else "  ·  ".join(item_ids), Color("a0763f"))
+    _add_detail_card("★  星等挑戰", "★★★ 完成 %d 輪內｜★★ 完成 %d 輪內｜★ 成功通關" % [
+        int(targets.get("threeStarMaxRounds", 0)), int(targets.get("twoStarMaxRounds", 0)),
+    ], Color("3d8f77"))
+    _add_detail_card("◈  首通獎勵", "戰功 +%d｜經驗 +50%s" % [
+        int(stage_detail.get("meritReward", 0)), "｜解鎖 %s" % str(stage_detail.get("unlocksClass", "")) if stage_detail.has("unlocksClass") else "",
+    ], Color("b76d42"))
+    if bool(stage_detail.get("tutorial", false)):
+        _add_detail_card("?  教學提示", "本關會引導自由選擇、跟色連鎖與首次連線。", Color("278da5"))
+    if bool(stage_detail.get("boss", false)):
+        _add_detail_card("!  終焉庇護", "末日天候切換時，終焉領主回復戰力上限 5%。", Color("a63e4d"))
+    stage_detail_start_button.disabled = not unlocked
+    stage_detail_start_button.text = "⚔  前往備戰" if unlocked else "🔒  尚未解鎖"
+
+
+func _add_detail_card(title: String, body: String, color: Color) -> void:
+    var card := PanelContainer.new()
+    card.add_theme_stylebox_override("panel", _panel_style(color, Color("ffe3a3"), 18, 2))
+    stage_detail_content.add_child(card)
+    var box := VBoxContainer.new()
+    box.add_theme_constant_override("separation", 3)
+    card.add_child(box)
+    var title_label := Label.new()
+    title_label.text = title
+    title_label.add_theme_font_size_override("font_size", 19)
+    title_label.add_theme_color_override("font_color", Color("fff5cf"))
+    box.add_child(title_label)
+    var body_label := Label.new()
+    body_label.text = body
+    body_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    body_label.add_theme_font_size_override("font_size", 16)
+    body_label.add_theme_color_override("font_color", Color.WHITE)
+    box.add_child(body_label)
+
+
+func _start_stage_from_detail() -> void:
+    if not stage_detail.is_empty():
+        _show_battle_prep(int(stage_detail["id"]))
+
+
+func _build_battle_prep_overlay() -> void:
+    battle_prep_overlay = Control.new()
+    battle_prep_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    battle_prep_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+    battle_prep_overlay.visible = false
+    add_child(battle_prep_overlay)
+    var sky := ColorRect.new()
+    sky.color = Color("276b9d")
+    sky.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    battle_prep_overlay.add_child(sky)
+    var banners := Label.new()
+    banners.text = "⚑        ✦        ⚑"
+    banners.position = Vector2(38, 112)
+    banners.add_theme_font_size_override("font_size", 44)
+    banners.add_theme_color_override("font_color", Color(1.0, 0.9, 0.44, 0.28))
+    banners.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    battle_prep_overlay.add_child(banners)
+    var center := CenterContainer.new()
+    center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    battle_prep_overlay.add_child(center)
+    var panel := PanelContainer.new()
+    panel.custom_minimum_size = Vector2(610, 1080)
+    panel.add_theme_stylebox_override("panel", _panel_style(Color("193d78"), Color("ffe08a"), 28, 3))
+    center.add_child(panel)
+    var margin := MarginContainer.new()
+    margin.add_theme_constant_override("margin_left", 24)
+    margin.add_theme_constant_override("margin_top", 22)
+    margin.add_theme_constant_override("margin_right", 24)
+    margin.add_theme_constant_override("margin_bottom", 22)
+    panel.add_child(margin)
+    var layout := VBoxContainer.new()
+    layout.add_theme_constant_override("separation", 12)
+    margin.add_child(layout)
+    var heading := Label.new()
+    heading.text = "遠征備戰"
+    heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    heading.add_theme_font_size_override("font_size", 33)
+    heading.add_theme_color_override("font_color", Color("fff0ac"))
+    layout.add_child(heading)
+    var subheading := Label.new()
+    subheading.text = "整備城堡與戰術道具，準備出征"
+    subheading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    subheading.add_theme_font_size_override("font_size", 16)
+    subheading.add_theme_color_override("font_color", Color("cceeff"))
+    layout.add_child(subheading)
+    var scroll := ScrollContainer.new()
+    scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+    scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+    layout.add_child(scroll)
+    battle_prep_content = VBoxContainer.new()
+    battle_prep_content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    battle_prep_content.add_theme_constant_override("separation", 12)
+    scroll.add_child(battle_prep_content)
+    battle_prep_start_button = Button.new()
+    battle_prep_start_button.text = "⚔  出征！"
+    battle_prep_start_button.custom_minimum_size = Vector2(0, 68)
+    battle_prep_start_button.add_theme_font_size_override("font_size", 24)
+    _style_primary_button(battle_prep_start_button, Color("319c57"), Color("52bd73"), Color("fff5bc"))
+    battle_prep_start_button.pressed.connect(_start_stage_from_prep)
+    layout.add_child(battle_prep_start_button)
+    var back := Button.new()
+    back.text = "← 返回關卡詳情"
+    back.custom_minimum_size = Vector2(0, 48)
+    back.add_theme_font_size_override("font_size", 17)
+    _style_primary_button(back, Color("356da8"), Color("4d91ca"), Color("ebf7ff"))
+    back.pressed.connect(_return_to_stage_detail)
+    layout.add_child(back)
+
+
+func _show_battle_prep(stage_id: int) -> void:
+    stage_detail = Campaign.get_stage(stage_id, campaign_stages)
+    if stage_detail.is_empty():
+        return
+    result_overlay.visible = false
+    hub_overlay.visible = false
+    campaign_overlay.visible = false
+    stage_detail_overlay.visible = false
+    battle_prep_overlay.visible = true
+    _refresh_battle_prep()
+
+
+func _refresh_battle_prep() -> void:
+    for child in battle_prep_content.get_children():
+        battle_prep_content.remove_child(child)
+        child.queue_free()
+    if stage_detail.is_empty():
+        return
+    var stage_id := int(stage_detail["id"])
+    var targets: Dictionary = stage_detail.get("starTargets", {})
+    var player_castle_level := int(profile.get("castle_level", 1))
+    var enemy_castle_level := int(stage_detail.get("aiCastleLevel", 1))
+    var map_data := Maps.get_map(str(stage_detail.get("mapId", Maps.DEFAULT_MAP_ID)))
+    var unlocked: bool = stage_id in profile.get("unlocked_stages", [1])
+    _add_prep_card("⚔  STAGE %02d｜%s" % [stage_id, str(stage_detail["name"])], "第 %d 章 %s｜%s｜%s AI" % [
+        int(stage_detail["chapter"]), str(stage_detail.get("chapterTitle", "")), str(stage_detail["mapId"]), _difficulty_text(str(stage_detail["aiDifficulty"])),
+    ], _chapter_color(int(stage_detail["chapter"])))
+    _add_prep_card("♜  城堡對陣", "我方 晨曦城堡 Lv.%d｜HP %.0f + 10 先手加成｜DEF %.0f\n敵方 城塞 Lv.%d｜HP %.0f｜DEF %.0f" % [
+        player_castle_level, Progression.castle_hp(player_castle_level), Progression.castle_def(player_castle_level),
+        enemy_castle_level, Progression.castle_hp(enemy_castle_level), Progression.castle_def(enemy_castle_level),
+    ], Color("4077b7"))
+    _add_prep_card("✦  出戰職業", _training_summary(stage_detail.get("classes", [])), Color("7653a9"))
+    _add_prep_card("☁  地形與天候", "%s｜主天氣：%s\n職業地形加成將在棋盤出現時生效。" % [
+        str(stage_detail["mapId"]), _map_weather_text(map_data),
+    ], Color("2d86bd"))
+    _add_prep_card("▣  戰術行囊", "本場已配發全部 20 種戰術道具各 1 份。開戰後可由左側道具欄使用；敵軍攜帶：%s" % [
+        "無" if stage_detail.get("aiItems", []).is_empty() else "、".join(stage_detail.get("aiItems", [])),
+    ], Color("a0763f"))
+    _add_prep_card("★  勝利目標", "★★★ %d 輪內｜★★ %d 輪內｜★ 成功擊破敵方城堡\n首通：戰功 +%d｜經驗 +50" % [
+        int(targets.get("threeStarMaxRounds", 0)), int(targets.get("twoStarMaxRounds", 0)), int(stage_detail.get("meritReward", 0)),
+    ], Color("3d8f77"))
+    battle_prep_start_button.disabled = not unlocked
+    battle_prep_start_button.text = "⚔  出征！" if unlocked else "🔒  尚未解鎖"
+
+
+func _add_prep_card(title: String, body: String, color: Color) -> void:
+    var card := PanelContainer.new()
+    card.add_theme_stylebox_override("panel", _panel_style(color, Color("ffe3a3"), 18, 2))
+    battle_prep_content.add_child(card)
+    var box := VBoxContainer.new()
+    box.add_theme_constant_override("separation", 3)
+    card.add_child(box)
+    var title_label := Label.new()
+    title_label.text = title
+    title_label.add_theme_font_size_override("font_size", 20)
+    title_label.add_theme_color_override("font_color", Color("fff5cf"))
+    box.add_child(title_label)
+    var body_label := Label.new()
+    body_label.text = body
+    body_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    body_label.add_theme_font_size_override("font_size", 16)
+    body_label.add_theme_color_override("font_color", Color.WHITE)
+    box.add_child(body_label)
+
+
+func _training_summary(class_ids: Array) -> String:
+    var training: Dictionary = profile.get("class_training", {})
+    var rows: Array[String] = []
+    for class_id in class_ids:
+        rows.append("%s Lv.%d" % [str(class_id), int(training.get(str(class_id), 1))])
+    return "  ·  ".join(rows) + "\n職業訓練提高該職業在棋盤上的出現權重。"
+
+
+func _start_stage_from_prep() -> void:
+    if not stage_detail.is_empty():
+        _start_stage(int(stage_detail["id"]))
+
+
+func _return_to_stage_detail() -> void:
+    if not stage_detail.is_empty():
+        _show_stage_detail(int(stage_detail["id"]))
+
+
+func _chapter_color(chapter: int) -> Color:
+    var colors := [Color("398d63"), Color("3e8ec5"), Color("8168bc"), Color("cb7047"), Color("b48a43"), Color("5280bb"), Color("d0923f"), Color("31968a"), Color("5a6ea8"), Color("a34b54")]
+    return colors[clampi(chapter - 1, 0, colors.size() - 1)]
+
+
+func _map_weather_text(map_data: Dictionary) -> String:
+    var kind = map_data.get("mainWeather", null)
+    if str(kind) == "apocalypse":
+        return "末日天候循環"
+    return Weather.display_name(kind)
+
+
+func _difficulty_text(difficulty: String) -> String:
+    return {"easy": "簡單", "normal": "一般", "hard": "困難"}.get(difficulty, difficulty)
+
+
+func _rarity_text(weights: Dictionary) -> String:
+    return "灰 %d%%  ·  綠 %d%%  ·  藍 %d%%  ·  紅 %d%%  ·  金 %d%%" % [
+        int(weights.get("灰", 0)), int(weights.get("綠", 0)), int(weights.get("藍", 0)), int(weights.get("紅", 0)), int(weights.get("金", 0)),
+    ]
 
 
 func _refresh_hub() -> void:
@@ -434,9 +939,13 @@ func _refresh_hub() -> void:
     if hub_training_selector != null:
         selected_class = str(hub_training_selector.get_item_metadata(hub_training_selector.selected))
     var training_level := int(profile.get("class_training", {}).get(selected_class, 1))
-    hub_profile_label.text = "%s｜玩家 Lv.%d｜經驗 %d\n戰功 %d｜城堡 Lv.%d（HP %.0f／DEF %.0f）\n%s訓練 Lv.%d｜下次費用 %d" % [
-        str(profile.get("display_name", "城主")), int(profile.get("level", 1)), int(profile.get("exp", 0)),
-        int(profile.get("merit_points", 0)), castle_level, Progression.castle_hp(castle_level), Progression.castle_def(castle_level),
+    hub_resource_label.text = "%s  Lv.%d\n✦ 經驗 %d    ◈ 戰功 %d" % [
+        str(profile.get("display_name", "城主")), int(profile.get("level", 1)), int(profile.get("exp", 0)), int(profile.get("merit_points", 0)),
+    ]
+    hub_profile_label.text = "城堡 Lv.%d  ·  HP %.0f  ·  DEF %.0f" % [
+        castle_level, Progression.castle_hp(castle_level), Progression.castle_def(castle_level),
+    ]
+    hub_training_status_label.text = "✦ 職業訓練所｜%s Lv.%d｜下次費用 %d" % [
         selected_class, training_level, Progression.training_upgrade_cost(training_level),
     ]
 
@@ -453,31 +962,40 @@ func _refresh_campaign() -> void:
         var chapter := int(stage.get("chapter", 0))
         if chapter != current_chapter:
             current_chapter = chapter
+            var chapter_card := PanelContainer.new()
+            chapter_card.add_theme_stylebox_override("panel", _panel_style(_chapter_color(chapter), Color("fff0a0"), 18, 2))
+            campaign_list.add_child(chapter_card)
             var chapter_label := Label.new()
-            chapter_label.text = "第 %d 章｜%s" % [chapter, str(stage.get("chapterTitle", ""))]
-            chapter_label.add_theme_font_size_override("font_size", 20)
-            chapter_label.add_theme_color_override("font_color", Color("f0c674"))
-            campaign_list.add_child(chapter_label)
+            chapter_label.text = "✦  第 %d 章｜%s" % [chapter, str(stage.get("chapterTitle", ""))]
+            chapter_label.add_theme_font_size_override("font_size", 21)
+            chapter_label.add_theme_color_override("font_color", Color("fff9d7"))
+            chapter_card.add_child(chapter_label)
         var button := Button.new()
         var stage_result: Dictionary = progress.get(str(stage_id), {})
         var cleared := bool(stage_result.get("cleared", false))
         var locked := int(stage_id) not in unlocked
         var targets: Dictionary = stage.get("starTargets", {})
-        button.text = "Stage %02d｜%s｜AI Lv.%d%s\n★3 ≤ %d 輪｜★2 ≤ %d 輪" % [
-            int(stage_id), str(stage["name"]), int(stage["aiCastleLevel"]), "｜%s" % _star_text(int(stage_result.get("stars", 0))) if cleared else ("｜未解鎖" if locked else ""),
-            int(targets.get("threeStarMaxRounds", 0)), int(targets.get("twoStarMaxRounds", 0)),
+        button.text = "STAGE %02d  ·  %s%s\n%s｜AI Lv.%d｜★3 %d 輪／★2 %d 輪" % [
+            int(stage_id), str(stage["name"]), "  %s" % _star_text(int(stage_result.get("stars", 0))) if cleared else ("  🔒" if locked else ""),
+            str(stage["mapId"]), int(stage["aiCastleLevel"]), int(targets.get("threeStarMaxRounds", 0)), int(targets.get("twoStarMaxRounds", 0)),
         ]
+        button.custom_minimum_size = Vector2(0, 76)
+        button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+        button.add_theme_font_size_override("font_size", 17)
+        _style_primary_button(button, _chapter_color(chapter).darkened(0.14), _chapter_color(chapter), Color("fff9df"))
         button.tooltip_text = "%s｜首通戰功 %d｜二星 ≤ %d 輪｜三星 ≤ %d 輪｜%d 個 AI 道具" % [
             str(stage["mapId"]), int(stage.get("meritReward", 0)), int(targets.get("twoStarMaxRounds", 0)), int(targets.get("threeStarMaxRounds", 0)), stage.get("aiItems", []).size(),
         ]
         button.disabled = locked
-        button.pressed.connect(_start_stage.bind(int(stage_id)))
+        button.pressed.connect(_show_stage_detail.bind(int(stage_id)))
         campaign_list.add_child(button)
 
 
 func _show_hub() -> void:
     result_overlay.visible = false
     campaign_overlay.visible = false
+    stage_detail_overlay.visible = false
+    battle_prep_overlay.visible = false
     hub_overlay.visible = true
     difficulty_selector.disabled = false
     map_selector.disabled = false
@@ -487,6 +1005,8 @@ func _show_hub() -> void:
 func _show_campaign() -> void:
     result_overlay.visible = false
     hub_overlay.visible = false
+    stage_detail_overlay.visible = false
+    battle_prep_overlay.visible = false
     campaign_overlay.visible = true
     _refresh_campaign()
 
@@ -494,6 +1014,8 @@ func _show_campaign() -> void:
 func _start_free_battle() -> void:
     current_stage = {}
     hub_overlay.visible = false
+    stage_detail_overlay.visible = false
+    battle_prep_overlay.visible = false
     difficulty_selector.disabled = false
     map_selector.disabled = false
     _new_preview_match()
@@ -504,6 +1026,8 @@ func _start_stage(stage_id: int) -> void:
     if current_stage.is_empty():
         return
     campaign_overlay.visible = false
+    stage_detail_overlay.visible = false
+    battle_prep_overlay.visible = false
     difficulty_selector.disabled = true
     map_selector.disabled = true
     _new_preview_match()
@@ -907,7 +1431,7 @@ func _on_result_restart() -> void:
 func _on_result_next_stage() -> void:
     var next_stage_id := int(current_stage.get("nextStage", 0))
     if next_stage_id > 0:
-        _start_stage(next_stage_id)
+        _show_battle_prep(next_stage_id)
 
 
 func _star_text(stars: int) -> String:
